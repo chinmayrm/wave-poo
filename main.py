@@ -77,6 +77,20 @@ SAMPLE_MESSAGES: List[Dict[str, str]] = [
 
 
 # ── Endpoints ──────────────────────────────────────────────────
+@app.get("/")
+async def root():
+    return {
+        "service": "Agentic AI – Scam Interceptor",
+        "team": "NovaTech",
+        "version": "1.0.0",
+        "endpoints": {
+            "POST /api/analyze": "Analyze a message for scam indicators",
+            "GET /api/health": "Health check",
+            "GET /api/examples": "Sample scam messages for demo",
+            "GET /docs": "Interactive API documentation (Swagger UI)",
+        },
+    }
+
 @app.post("/api/analyze", response_model=AnalyzeResponse)
 async def analyze_message(req: AnalyzeRequest):
     """Run the multi-agent scam detection pipeline."""
