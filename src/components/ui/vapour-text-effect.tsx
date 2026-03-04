@@ -25,8 +25,11 @@ export function VaporTextEffect({
 }: VaporTextEffectProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animFrameRef = useRef<number | undefined>(undefined);
+  const doneRef = useRef(false);
 
   const initAndAnimate = useCallback(() => {
+    if (doneRef.current) return; // don't re-run after completion
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -122,6 +125,11 @@ export function VaporTextEffect({
         ctx.globalAlpha = 1;
 
         if (alive === 0 || t >= 1) {
+          // Paint solid black so nothing flashes
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = "#000";
+          ctx.fillRect(0, 0, w, h);
+          doneRef.current = true;
           onComplete?.();
           return;
         }
