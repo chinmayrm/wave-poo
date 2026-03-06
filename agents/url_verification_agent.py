@@ -11,12 +11,14 @@ from urllib.parse import urlparse
 SUSPICIOUS_TLDS = [
     ".xyz", ".top", ".club", ".online", ".site", ".icu",
     ".buzz", ".fun", ".space", ".info", ".pw", ".cc",
-    ".tk", ".ml", ".ga", ".cf", ".gq",
+    ".tk", ".ml", ".ga", ".cf", ".gq", ".work", ".click",
+    ".loan", ".date", ".bid", ".trade", ".webcam", ".stream",
 ]
 
 SHORTENER_DOMAINS = [
     "bit.ly", "tinyurl.com", "t.co", "goo.gl", "is.gd",
     "buff.ly", "ow.ly", "rebrand.ly", "cutt.ly", "shorturl.at",
+    "rb.gy", "t.ly", "v.gd", "qr.ae",
 ]
 
 PHISHING_URL_KEYWORDS = [
@@ -96,10 +98,16 @@ class URLVerificationAgent:
                 score += min(len(kw_hits) * 5, 15)
 
             # Domain squatting heuristic (hyphenated domains with bank-ish words)
-            brand_words = ["bank", "sbi", "hdfc", "icici", "paytm", "gpay", "phonepe", "amazon", "flipkart"]
+            brand_words = ["bank", "sbi", "hdfc", "icici", "paytm", "gpay", "phonepe",
+                           "amazon", "flipkart", "google", "microsoft", "apple", "paypal"]
             if any(b in domain for b in brand_words) and "-" in domain:
                 domain_flags.append("Possible domain squatting (brand name + hyphen)")
                 score += 10
+
+            # Excessive subdomains heuristic
+            if domain.count(".") >= 3:
+                domain_flags.append("Excessive subdomains (obfuscation technique)")
+                score += 6
 
             if domain_flags:
                 suspicious_domains.append(domain)

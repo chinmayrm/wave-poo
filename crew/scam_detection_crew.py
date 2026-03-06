@@ -4,6 +4,8 @@ Scam Detection Crew – Orchestrates the 4-agent sequential pipeline.
 Pipeline:  Text Analysis → URL Verification → Fraud Pattern → Risk Scoring
 """
 
+import time
+import logging
 from typing import Dict, Any
 
 from agents.text_analysis_agent import TextAnalysisAgent
@@ -12,9 +14,11 @@ from agents.fraud_pattern_agent import FraudPatternAgent
 from agents.risk_scoring_agent import RiskScoringAgent
 from preprocessing.text_cleaner import preprocess_message
 
+logger = logging.getLogger(__name__)
+
 
 class ScamDetectionCrew:
-    """Runs the full scam-detection pipeline."""
+    """Runs the full scam-detection pipeline with timing instrumentation."""
 
     def __init__(self):
         self.text_agent = TextAnalysisAgent()
@@ -22,21 +26,33 @@ class ScamDetectionCrew:
         self.pattern_agent = FraudPatternAgent()
         self.risk_agent = RiskScoringAgent()
 
+    def _timed(self, label: str, fn, *args):
+        """Run a function and return (result, elapsed_ms)."""
+        t0 = time.perf_counter()
+        result = fn(*args)
+        elapsed = round((time.perf_counter() - t0) * 1000, 2)
+        logger.info("%s completed in %.2f ms", label, elapsed)
+        return result, elapsed
+
     def analyze(self, raw_message: str) -> Dict[str, Any]:
+        t_start = time.perf_counter()
+
         # ── Step 0: Preprocessing ──────────────────────────────
-        preprocessed = preprocess_message(raw_message)
+        preprocessed, t_pre = self._timed("Preprocessing", preprocess_message, raw_message)
 
         # ── Step 1: Text Analysis ──────────────────────────────
-        text_result = self.text_agent.analyze(raw_message, preprocessed)
+        text_result, t_text = self._timed("TextAnalysis", self.text_agent.analyze, raw_message, preprocessed)
 
         # ── Step 2: URL Verification ───────────────────────────
-        url_result = self.url_agent.analyze(raw_message, preprocessed)
+        url_result, t_url = self._timed("URLVerification", self.url_agent.analyze, raw_message, preprocessed)
 
         # ── Step 3: Fraud Pattern Matching ─────────────────────
-        pattern_result = self.pattern_agent.analyze(raw_message, preprocessed)
+        pattern_result, t_pat = self._timed("FraudPattern", self.pattern_agent.analyze, raw_message, preprocessed)
 
         # ── Step 4: Risk Scoring ───────────────────────────────
-        risk = self.risk_agent.score(text_result, url_result, pattern_result)
+        risk, t_risk = self._timed("RiskScoring", self.risk_agent.score, text_result, url_result, pattern_result)
+
+        total_ms = round((time.perf_counter() - t_start) * 1000, 2)
 
         # ── Assemble full response ─────────────────────────────
         return {
@@ -64,5 +80,16 @@ class ScamDetectionCrew:
             "preprocessed": {
                 "keywords_found": preprocessed.get("keywords_found", []),
                 "urls_found": preprocessed.get("urls_found", []),
+            },
+            "metadata": {
+                "message_length": len(raw_message),
+                "timing_ms": {
+                    "preprocessing": t_pre,
+                    "text_analysis": t_text,
+                    "url_verification": t_url,
+                    "pattern_matching": t_pat,
+                    "risk_scoring": t_risk,
+                    "total": total_ms,
+                },
             },
         }

@@ -38,6 +38,11 @@ class RiskScoringAgent:
         if urgency > 5:
             reasons.append("High urgency / threat language used")
 
+        # Category detail
+        cats = text_result.get("category_scores", {})
+        if cats.get("social_engineering", 0) > 0:
+            reasons.append("Social engineering tactics detected")
+
         # ── URL analysis contribution (max 30) ─────────────────
         url_score = url_result.get("url_risk_score", 0)
         score += url_score
@@ -60,6 +65,17 @@ class RiskScoringAgent:
         elif pattern_result.get("confidence", 0) > 0.15:
             score += 5
             reasons.append("Partial match to known scam patterns")
+
+        # ── Cross-signal amplification ─────────────────────────
+        # If multiple agent categories fire, the message is likely worse
+        active_signals = sum([
+            text_score > 10,
+            url_score > 10,
+            pattern_result.get("pattern_matched", False),
+        ])
+        if active_signals >= 3:
+            score += 5
+            reasons.append("Multiple independent risk signals detected")
 
         # ── Clamp ──────────────────────────────────────────────
         score = max(0, min(score, 100))
