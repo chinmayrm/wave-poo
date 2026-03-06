@@ -437,22 +437,23 @@ export function ProjectPage() {
     setResult(null);
     setPipelineStep(0);
 
-    // Simulate pipeline progression
-    const stepTimers = [300, 600, 900, 1200];
-    const timers = stepTimers.map(
-      (delay, i) =>
-        setTimeout(() => setPipelineStep(i + 1), delay)
-    );
+    // Run API call and visual pipeline in parallel — always show full animation
+    const stepDurations = [800, 1600, 2400, 3200, 4000]; // ms for each step transition
+    const stepPromise = new Promise<void>((resolve) => {
+      stepDurations.forEach((delay, i) => {
+        setTimeout(() => {
+          setPipelineStep(i + 1);
+          if (i === stepDurations.length - 1) resolve();
+        }, delay);
+      });
+    });
 
     try {
-      const res = await analyzeMessage(message);
-      timers.forEach(clearTimeout);
+      const [res] = await Promise.all([analyzeMessage(message), stepPromise]);
       setPipelineStep(5); // all done
       setResult(res);
-      // Scroll to results
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
     } catch (err: unknown) {
-      timers.forEach(clearTimeout);
       setPipelineStep(-1);
       const msg = err instanceof Error ? err.message : "Analysis failed";
       setError(msg);
