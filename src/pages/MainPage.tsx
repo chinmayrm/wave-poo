@@ -3,20 +3,22 @@ import { useNavigate } from "react-router-dom";
 import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 import {
   Shield,
-  Users,
   Rocket,
   AlertTriangle,
   Target,
   Lightbulb,
+  Brain,
+  Link2,
+  FileSearch,
+  Gauge,
+  Zap,
+  Lock,
+  Eye,
+  ArrowRight,
+  ChevronRight,
 } from "lucide-react";
 
 // ─── Data ─────────────────────────────────────────────────
-const team = [
-  { name: "Poorvi I H", role: "Team Lead", initial: "P" },
-  { name: "Vaishnavi", role: "Developer", initial: "V" },
-  { name: "Neha", role: "Developer", initial: "N" },
-];
-
 const challenges = [
   "Sophisticated phishing techniques that evade traditional detection",
   "Lack of real-time threat intelligence and analysis",
@@ -24,18 +26,83 @@ const challenges = [
   "Need for proactive intervention before damage occurs",
 ];
 
-// ─── Shared inline-style helpers (pure JS objects) ───────
+const pipelineSteps = [
+  {
+    icon: Brain,
+    title: "Text Analysis",
+    desc: "NLP-powered scam language detection across 6 threat categories",
+    color: "#a78bfa",
+    bg: "rgba(167,139,250,0.08)",
+    border: "rgba(167,139,250,0.2)",
+  },
+  {
+    icon: Link2,
+    title: "URL Verification",
+    desc: "Deep URL inspection for phishing indicators and domain squatting",
+    color: "#22d3ee",
+    bg: "rgba(34,211,238,0.08)",
+    border: "rgba(34,211,238,0.2)",
+  },
+  {
+    icon: FileSearch,
+    title: "Pattern Matching",
+    desc: "Cross-reference against 8+ known fraud template databases",
+    color: "#f59e0b",
+    bg: "rgba(245,158,11,0.08)",
+    border: "rgba(245,158,11,0.2)",
+  },
+  {
+    icon: Gauge,
+    title: "Risk Scoring",
+    desc: "Aggregated threat assessment with actionable classification",
+    color: "#ef4444",
+    bg: "rgba(239,68,68,0.08)",
+    border: "rgba(239,68,68,0.2)",
+  },
+];
+
+const features = [
+  {
+    icon: Zap,
+    title: "Real-Time Detection",
+    desc: "Instant analysis of suspicious messages with sub-second response times",
+    color: "#f59e0b",
+  },
+  {
+    icon: Lock,
+    title: "Zero Data Storage",
+    desc: "Messages are analyzed in-memory and never persisted to any database",
+    color: "#22c55e",
+  },
+  {
+    icon: Eye,
+    title: "Transparent AI",
+    desc: "Full breakdown of every agent's reasoning — no black box decisions",
+    color: "#a78bfa",
+  },
+];
+
+const techStack = [
+  { name: "FastAPI", color: "#009688" },
+  { name: "React 19", color: "#61dafb" },
+  { name: "TypeScript", color: "#3178c6" },
+  { name: "Python", color: "#3776ab" },
+  { name: "Framer Motion", color: "#ff0050" },
+  { name: "Pydantic", color: "#e92063" },
+];
+
+// ─── Shared styles ───────────────────────────────────────
 const card: React.CSSProperties = {
-  background: "rgba(255,255,255,0.04)",
-  backdropFilter: "blur(20px)",
-  WebkitBackdropFilter: "blur(20px)",
-  border: "1px solid rgba(255,255,255,0.07)",
-  borderRadius: 18,
-  padding: "28px 32px",
+  background: "rgba(255,255,255,0.035)",
+  backdropFilter: "blur(24px)",
+  WebkitBackdropFilter: "blur(24px)",
+  border: "1px solid rgba(255,255,255,0.06)",
+  borderRadius: 20,
+  padding: "32px 36px",
 };
 
 const innerCard: React.CSSProperties = {
-  background: "rgba(255,255,255,0.03)",
+  background: "rgba(255,255,255,0.025)",
   border: "1px solid rgba(255,255,255,0.05)",
   borderRadius: 14,
   padding: "22px 24px",
@@ -49,29 +116,53 @@ const iconBox = (
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  width: 46,
-  height: 46,
-  borderRadius: 12,
+  width: 48,
+  height: 48,
+  borderRadius: 14,
   background: `linear-gradient(135deg, ${from}, ${to})`,
   border: `1px solid ${border}`,
   flexShrink: 0,
 });
+
+const sectionTitle: React.CSSProperties = {
+  fontSize: "clamp(1.4rem, 3vw, 1.8rem)",
+  fontWeight: 800,
+  color: "#f0f0f5",
+  letterSpacing: "-0.02em",
+  marginBottom: 8,
+};
+
+const sectionSub: React.CSSProperties = {
+  fontSize: "0.9rem",
+  color: "#6b6b80",
+  maxWidth: 520,
+  lineHeight: 1.6,
+};
 
 // ─── Animation variants ──────────────────────────────────
 const stagger = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.13, delayChildren: 0.15 },
+    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
   },
 };
 
 const riseUp = {
-  hidden: { opacity: 0, y: 36 },
+  hidden: { opacity: 0, y: 30 },
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.55, ease: "easeOut" as const },
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const },
+  },
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.9 },
+  show: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const },
   },
 };
 
@@ -86,7 +177,7 @@ export function MainPage() {
           style={{
             width: "100%",
             minHeight: "100vh",
-            padding: "48px 24px",
+            padding: "48px 24px 80px",
             overflowY: "auto",
           }}
         >
@@ -95,47 +186,183 @@ export function MainPage() {
             initial="hidden"
             animate="show"
             style={{
-              maxWidth: 960,
+              maxWidth: 1040,
               margin: "0 auto",
               display: "flex",
               flexDirection: "column",
-              gap: 36,
+              gap: 48,
             }}
           >
-            {/* ─── Header ─── */}
-            <motion.div variants={riseUp} style={{ textAlign: "center" }}>
+            {/* ═══════════════════════════════════════════
+                HERO SECTION
+               ═══════════════════════════════════════════ */}
+            <motion.div
+              variants={riseUp}
+              style={{ textAlign: "center", paddingTop: 20, paddingBottom: 8 }}
+            >
+              {/* Badge */}
+              <motion.div
+                initial={{ opacity: 0, y: -12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "6px 16px",
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.06em",
+                  color: "#a78bfa",
+                  background: "rgba(167,139,250,0.08)",
+                  border: "1px solid rgba(167,139,250,0.15)",
+                  borderRadius: 100,
+                  marginBottom: 20,
+                  textTransform: "uppercase" as const,
+                }}
+              >
+                <span
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: "#a78bfa",
+                    animation: "pulse-glow 2s ease-in-out infinite",
+                  }}
+                />
+                WAVE 3.0 — Hackathon 2026
+              </motion.div>
+
+              {/* Main Title */}
               <motion.h1
                 style={{
-                  fontSize: "clamp(2.5rem, 7vw, 5.5rem)",
-                  fontWeight: 800,
-                  letterSpacing: "-0.03em",
-                  background: "linear-gradient(135deg, #c084fc, #818cf8, #38bdf8)",
+                  fontSize: "clamp(2.8rem, 8vw, 5.5rem)",
+                  fontWeight: 900,
+                  letterSpacing: "-0.04em",
+                  background: "linear-gradient(135deg, #c084fc 0%, #818cf8 40%, #38bdf8 70%, #22d3ee 100%)",
+                  backgroundSize: "200% auto",
+                  animation: "gradient-shift 6s ease infinite",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
-                  lineHeight: 1.1,
+                  lineHeight: 1.05,
                 }}
                 initial={{ scale: 0.92 }}
                 animate={{ scale: 1 }}
-                transition={{ duration: 0.7 }}
+                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] as const }}
               >
                 NovaTech
               </motion.h1>
-              <p
+
+              {/* Subtitle */}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
                 style={{
-                  marginTop: 12,
-                  fontSize: "1.1rem",
+                  marginTop: 16,
+                  fontSize: "clamp(1rem, 2.5vw, 1.25rem)",
                   color: "#8b8b9e",
-                  letterSpacing: "0.04em",
                   fontWeight: 400,
+                  lineHeight: 1.6,
+                  maxWidth: 600,
+                  margin: "16px auto 0",
                 }}
               >
-                WAVE 3.0 — Hackathon 2026
-              </p>
+                Multi-agent AI system that autonomously detects, intercepts, and
+                classifies phishing attacks in real time.
+              </motion.p>
+
+              {/* Hero CTA */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: 14,
+                  marginTop: 32,
+                  flexWrap: "wrap" as const,
+                }}
+              >
+                <motion.button
+                  onClick={() => navigate("/project")}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 10,
+                    padding: "14px 32px",
+                    fontSize: "0.95rem",
+                    fontWeight: 700,
+                    color: "#fff",
+                    background: "linear-gradient(135deg, #7c3aed, #6366f1, #0ea5e9)",
+                    border: "none",
+                    borderRadius: 14,
+                    cursor: "pointer",
+                    boxShadow: "0 4px 28px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.1)",
+                    fontFamily: "inherit",
+                  }}
+                  whileHover={{ scale: 1.03, y: -2, boxShadow: "0 8px 40px rgba(99,102,241,0.5)" }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Rocket size={18} />
+                  Launch Interceptor
+                  <ArrowRight size={16} />
+                </motion.button>
+              </motion.div>
+
+              {/* Stats Row */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: 40,
+                  marginTop: 40,
+                  flexWrap: "wrap" as const,
+                }}
+              >
+                {[
+                  { value: "4", label: "AI Agents" },
+                  { value: "8+", label: "Scam Patterns" },
+                  { value: "6", label: "Threat Categories" },
+                  { value: "<1s", label: "Response Time" },
+                ].map(({ value, label }) => (
+                  <div key={label} style={{ textAlign: "center" }}>
+                    <div
+                      style={{
+                        fontSize: "1.6rem",
+                        fontWeight: 800,
+                        background: "linear-gradient(135deg, #c084fc, #38bdf8)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                      }}
+                    >
+                      {value}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "0.72rem",
+                        color: "#6b6b80",
+                        fontWeight: 500,
+                        letterSpacing: "0.04em",
+                        textTransform: "uppercase" as const,
+                        marginTop: 2,
+                      }}
+                    >
+                      {label}
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
             </motion.div>
 
-            {/* ─── Problem Statement Card ─── */}
+            {/* ═══════════════════════════════════════════
+                PROBLEM STATEMENT CARD
+               ═══════════════════════════════════════════ */}
             <motion.div variants={riseUp} style={card}>
-              {/* Card heading */}
               <div
                 style={{
                   display: "flex",
@@ -165,7 +392,7 @@ export function MainPage() {
                   </h2>
                   <span
                     style={{
-                      fontSize: "0.8rem",
+                      fontSize: "0.78rem",
                       fontWeight: 600,
                       letterSpacing: "0.08em",
                       color: "#38bdf8",
@@ -177,7 +404,6 @@ export function MainPage() {
                 </div>
               </div>
 
-              {/* Two-column inner cards */}
               <div
                 style={{
                   display: "grid",
@@ -185,7 +411,6 @@ export function MainPage() {
                   gap: 18,
                 }}
               >
-                {/* Background */}
                 <div style={innerCard}>
                   <div
                     style={{
@@ -222,7 +447,6 @@ export function MainPage() {
                   </p>
                 </div>
 
-                {/* Challenges */}
                 <div style={innerCard}>
                   <div
                     style={{
@@ -257,9 +481,7 @@ export function MainPage() {
                           marginBottom: 8,
                         }}
                       >
-                        <span style={{ color: "#fb923c", marginTop: 2 }}>
-                          ▸
-                        </span>
+                        <span style={{ color: "#fb923c", marginTop: 2 }}>▸</span>
                         <span>{c}</span>
                       </li>
                     ))}
@@ -267,7 +489,6 @@ export function MainPage() {
                 </div>
               </div>
 
-              {/* Expected solution */}
               <div style={{ ...innerCard, marginTop: 18 }}>
                 <div
                   style={{
@@ -305,107 +526,227 @@ export function MainPage() {
               </div>
             </motion.div>
 
-            {/* ─── Team Members Card ─── */}
-            <motion.div variants={riseUp} style={card}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 16,
-                  marginBottom: 24,
-                }}
-              >
-                <div
-                  style={iconBox(
-                    "rgba(56,189,248,0.15)",
-                    "rgba(34,211,238,0.08)",
-                    "rgba(56,189,248,0.25)"
-                  )}
-                >
-                  <Users size={22} color="#38bdf8" />
-                </div>
-                <h2
-                  style={{
-                    fontSize: "1.4rem",
-                    fontWeight: 700,
-                    color: "#f0f0f5",
-                  }}
-                >
-                  Team Members
-                </h2>
+            {/* ═══════════════════════════════════════════
+                HOW IT WORKS — AGENT PIPELINE
+               ═══════════════════════════════════════════ */}
+            <motion.div variants={riseUp}>
+              <div style={{ textAlign: "center", marginBottom: 28 }}>
+                <h2 style={sectionTitle}>How It Works</h2>
+                <p style={{ ...sectionSub, margin: "0 auto" }}>
+                  Four specialized AI agents work in sequence — each adding a
+                  layer of analysis to produce a final threat assessment.
+                </p>
               </div>
 
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
                   gap: 16,
                 }}
               >
-                {team.map((m, i) => (
-                  <motion.div
-                    key={m.name}
+                {pipelineSteps.map((step, i) => {
+                  const Icon = step.icon;
+                  return (
+                    <motion.div
+                      key={step.title}
+                      variants={scaleIn}
+                      whileHover={{
+                        y: -4,
+                        borderColor: step.border,
+                        background: step.bg,
+                      }}
+                      style={{
+                        ...innerCard,
+                        position: "relative",
+                        cursor: "default",
+                        transition: "border-color 0.3s, background 0.3s",
+                      }}
+                    >
+                      {/* Step number */}
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 12,
+                          right: 14,
+                          fontSize: "0.65rem",
+                          fontWeight: 700,
+                          color: step.color,
+                          opacity: 0.5,
+                          fontFamily: "var(--font-mono)",
+                        }}
+                      >
+                        AGENT {i + 1}
+                      </div>
+
+                      <div
+                        style={{
+                          width: 42,
+                          height: 42,
+                          borderRadius: 12,
+                          background: step.bg,
+                          border: `1px solid ${step.border}`,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          marginBottom: 14,
+                        }}
+                      >
+                        <Icon size={20} color={step.color} />
+                      </div>
+
+                      <h3
+                        style={{
+                          fontSize: "0.95rem",
+                          fontWeight: 700,
+                          color: "#e0e0f0",
+                          marginBottom: 6,
+                        }}
+                      >
+                        {step.title}
+                      </h3>
+                      <p
+                        style={{
+                          fontSize: "0.8rem",
+                          color: "#8b8b9e",
+                          lineHeight: 1.55,
+                        }}
+                      >
+                        {step.desc}
+                      </p>
+
+                      {/* Connector arrow (skip last) */}
+                      {i < pipelineSteps.length - 1 && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            right: -12,
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            color: "rgba(255,255,255,0.12)",
+                            zIndex: 2,
+                            display: "none", // hidden on mobile
+                          }}
+                          className="pipeline-arrow"
+                        >
+                          <ChevronRight size={18} />
+                        </div>
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+
+            {/* ═══════════════════════════════════════════
+                FEATURES
+               ═══════════════════════════════════════════ */}
+            <motion.div variants={riseUp}>
+              <div style={{ textAlign: "center", marginBottom: 28 }}>
+                <h2 style={sectionTitle}>Key Features</h2>
+                <p style={{ ...sectionSub, margin: "0 auto" }}>
+                  Built with security and transparency at the core.
+                </p>
+              </div>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                  gap: 16,
+                }}
+              >
+                {features.map((f) => {
+                  const Icon = f.icon;
+                  return (
+                    <motion.div
+                      key={f.title}
+                      variants={scaleIn}
+                      whileHover={{ y: -3 }}
+                      style={{
+                        ...card,
+                        padding: "26px 28px",
+                        cursor: "default",
+                      }}
+                    >
+                      <Icon size={22} color={f.color} style={{ marginBottom: 14 }} />
+                      <h3
+                        style={{
+                          fontSize: "1rem",
+                          fontWeight: 700,
+                          color: "#e0e0f0",
+                          marginBottom: 8,
+                        }}
+                      >
+                        {f.title}
+                      </h3>
+                      <p
+                        style={{
+                          fontSize: "0.82rem",
+                          color: "#8b8b9e",
+                          lineHeight: 1.6,
+                        }}
+                      >
+                        {f.desc}
+                      </p>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+
+            {/* ═══════════════════════════════════════════
+                TECH STACK
+               ═══════════════════════════════════════════ */}
+            <motion.div variants={riseUp} style={{ textAlign: "center" }}>
+              <p
+                style={{
+                  fontSize: "0.72rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.1em",
+                  color: "#6b6b80",
+                  textTransform: "uppercase" as const,
+                  marginBottom: 14,
+                }}
+              >
+                Built With
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: 10,
+                  flexWrap: "wrap" as const,
+                }}
+              >
+                {techStack.map((t) => (
+                  <span
+                    key={t.name}
                     style={{
-                      ...innerCard,
-                      textAlign: "center" as const,
-                      cursor: "default",
+                      padding: "6px 14px",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      color: t.color,
+                      background: `${t.color}12`,
+                      border: `1px solid ${t.color}25`,
+                      borderRadius: 8,
+                      fontFamily: "var(--font-mono)",
                     }}
-                    whileHover={{
-                      y: -4,
-                      boxShadow: "0 8px 30px rgba(139,92,246,0.12)",
-                    }}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.35 + i * 0.1 }}
                   >
-                    <div
-                      style={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: "50%",
-                        margin: "0 auto 14px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "1.3rem",
-                        fontWeight: 700,
-                        color: "#fff",
-                        background:
-                          "linear-gradient(135deg, #a78bfa, #818cf8, #38bdf8)",
-                      }}
-                    >
-                      {m.initial}
-                    </div>
-                    <p
-                      style={{
-                        fontSize: "1rem",
-                        fontWeight: 600,
-                        color: "#f0f0f5",
-                      }}
-                    >
-                      {m.name}
-                    </p>
-                    <p
-                      style={{
-                        fontSize: "0.78rem",
-                        color: "#6b6b80",
-                        marginTop: 4,
-                      }}
-                    >
-                      {m.role}
-                    </p>
-                  </motion.div>
+                    {t.name}
+                  </span>
                 ))}
               </div>
             </motion.div>
 
-            {/* ─── Launch Button ─── */}
+            {/* ═══════════════════════════════════════════
+                CTA + FOOTER
+               ═══════════════════════════════════════════ */}
             <motion.div
               variants={riseUp}
               style={{
-                display: "flex",
-                justifyContent: "center",
-                paddingBottom: 40,
+                textAlign: "center",
+                paddingBottom: 20,
               }}
             >
               <motion.button
@@ -413,24 +754,36 @@ export function MainPage() {
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: 12,
+                  gap: 10,
                   padding: "14px 36px",
-                  fontSize: "1.05rem",
+                  fontSize: "0.95rem",
                   fontWeight: 700,
                   color: "#fff",
-                  background:
-                    "linear-gradient(135deg, #8b5cf6, #6366f1, #0ea5e9)",
+                  background: "linear-gradient(135deg, #7c3aed, #6366f1, #0ea5e9)",
                   border: "none",
                   borderRadius: 14,
                   cursor: "pointer",
-                  boxShadow: "0 4px 24px rgba(99,102,241,0.35)",
+                  boxShadow: "0 4px 28px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.1)",
+                  fontFamily: "inherit",
                 }}
-                whileHover={{ scale: 1.04, y: -2 }}
+                whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.97 }}
               >
-                <Rocket size={20} />
-                Launch Project
+                <Rocket size={18} />
+                Try the Interceptor
+                <ArrowRight size={16} />
               </motion.button>
+
+              <p
+                style={{
+                  marginTop: 32,
+                  fontSize: "0.72rem",
+                  color: "#4a4a5a",
+                  letterSpacing: "0.04em",
+                }}
+              >
+                Team NovaTech — WAVE 3.0 Hackathon 2026
+              </p>
             </motion.div>
           </motion.div>
         </div>
